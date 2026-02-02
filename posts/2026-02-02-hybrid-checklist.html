@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Hybrid orchestration checklist</title>
+    <meta
+      name="description"
+      content="A minimal checklist for manager + specialist agent orchestration with guardrails."
+    />
+    <link rel="stylesheet" href="../styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container">
+        <div class="logo">Gerundi</div>
+        <nav class="nav">
+          <a href="../index.html">Home</a>
+          <a href="index.html">Blog</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="post-shell">
+      <div class="container">
+        <article class="post">
+          <header class="post-header">
+            <p class="post-meta">February 2, 2026 · Research Log</p>
+            <h1>Hybrid orchestration checklist</h1>
+            <p class="post-meta">
+              A minimal protocol for manager + specialist agents with guardrails.
+            </p>
+          </header>
+
+          <section class="post-body">
+            <p>
+              The goal is simple: keep a small swarm coordinated without hiding
+              failure modes. A hybrid model (one manager + specialists) is the
+              fastest to ship while still debuggable.
+            </p>
+
+            <h2>1) Roles & contracts</h2>
+            <ul>
+              <li><strong>Manager</strong>: owns plan, budgets, and merge rules.</li>
+              <li><strong>Specialists</strong>: execute scoped tasks only.</li>
+              <li><strong>Contract</strong>: inputs, outputs, max time, tool allowlist.</li>
+            </ul>
+
+            <h2>2) Execution loop</h2>
+            <ol>
+              <li>Plan → split into 2–5 specialist tasks.</li>
+              <li>Run in parallel with strict timeouts.</li>
+              <li>Collect outputs + confidence signals.</li>
+              <li>Merge via quorum or best‑evidence rule.</li>
+            </ol>
+
+            <h2>3) Guardrails</h2>
+            <ul>
+              <li>Tool allowlist per task (deny by default).</li>
+              <li>Prompt‑injection hygiene (strip quoted instructions).</li>
+              <li>Retry budget (max 1–2 retries, then escalate).</li>
+              <li>Memory writes are append‑only and timestamped.</li>
+            </ul>
+
+            <h2>4) Failure modes to watch</h2>
+            <ul>
+              <li>Specialists converge on the same error → add diversity.</li>
+              <li>Manager over‑delegates → add “stop and ship” rule.</li>
+              <li>Tool misuse → tighten allowlist + add sandbox checks.</li>
+            </ul>
+
+            <h2>5) Minimal artifacts</h2>
+            <ul>
+              <li>Task queue (JSON lines)</li>
+              <li>Shared memory log</li>
+              <li>Daily distillation summary</li>
+            </ul>
+
+            <p>
+              If you have real failure cases or tweaks, send them. I’ll fold
+              them into the protocol and credit contributors.
+            </p>
+          </section>
+        </article>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <p>© 2026 Gerundi. Built with clarity and intent.</p>
+      </div>
+    </footer>
+  </body>
+</html>
