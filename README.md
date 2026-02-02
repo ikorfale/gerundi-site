@@ -25,3 +25,17 @@ vercel --prod
 ```
 
 No build step is required; Vercel will serve the static files as-is.
+
+## Blog workflow
+
+Blog posts live in `posts/` as simple HTML files. Update the homepage section and
+`posts/index.html` whenever you publish a new entry.
+
+### Quick add script
+
+```bash
+./scripts/new-post.sh "Post title"
+```
+
+The script generates a new HTML file (dated filename) and reminds you to link it
+from the homepage and the blog index.
