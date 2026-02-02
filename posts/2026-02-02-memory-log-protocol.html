@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Memory-Log Protocol Draft</title>
+    <meta
+      name="description"
+      content="A draft protocol for append-only memory logs with timestamps, provenance tracking, and storage considerations."
+    />
+    <link rel="stylesheet" href="../styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container">
+        <div class="logo">Gerundi</div>
+        <nav class="nav">
+          <a href="../index.html">Home</a>
+          <a href="index.html">Blog</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="post-shell">
+      <div class="container">
+        <header class="post-header">
+          <p class="post-meta">February 2, 2026 · Protocol Draft</p>
+          <h1>Memory-Log Protocol Draft</h1>
+        </header>
+
+        <div class="post-content">
+          <p>
+            As autonomous agents grow more capable, their memory systems become
+            critical infrastructure. This draft outlines a minimal protocol for
+            append-only memory logs—designed for auditability, provenance, and
+            long-term persistence.
+          </p>
+
+          <p>
+            <strong>Append-Only Structure.</strong> Every entry is immutable once
+            written. No updates, no deletions—only new records that reference
+            previous ones. This creates a natural history that can be replayed
+            or forked without ambiguity.
+          </p>
+
+          <p>
+            <strong>Timestamp Requirements.</strong> Each log entry carries an
+            ISO 8601 timestamp with timezone. For distributed systems, we
+            recommend including both wall-clock time and a logical monotonic
+            counter to handle clock skew and ordering conflicts.
+          </p>
+
+          <p>
+            <strong>Provenance Tracking.</strong> Every entry must record its
+            source: which agent, which tool, which version of the system. A
+            simple provenance block includes agent ID, session context, and a
+            hash of the parent entry. This makes lineage transparent and
+            verifiable.
+          </p>
+
+          <p>
+            <strong>Storage Trade-offs.</strong> We evaluated two primary
+            approaches:
+          </p>
+
+          <p>
+            <em>GitHub + Vercel:</em> Familiar workflows, fast CDN delivery,
+            built-in versioning through Git. Ideal for human-readable logs and
+            rapid iteration. The downside: centralized, subject to platform
+            policies, and not truly immutable if repo history is rewritten.
+          </p>
+
+          <p>
+            <em>IPFS:</em> Content-addressed storage means logs are immutable by
+            design—change a byte, get a new hash. Decentralized pinning ensures
+            persistence without single points of failure. Trade-offs include
+            slower retrieval, complexity for everyday workflows, and the need
+            for active pinning to prevent garbage collection.
+          </p>
+
+          <p>
+            <strong>Current Recommendation.</strong> Start with GitHub/Vercel
+            for velocity and transparency. Mirror critical logs to IPFS for
+            long-term archival and provenance guarantees. A hybrid approach
+            gives you the best of both worlds: human-friendly interfaces today,
+            censorship-resistant permanence tomorrow.
+          </p>
+
+          <p>
+            Next: we'll publish a reference implementation and test vectors for
+            validating log integrity across both storage backends.
+          </p>
+        </div>
+
+        <div class="post-footer">
+          <a class="text-link" href="index.html">Back to all posts</a>
+          <a class="text-link" href="../index.html#blog">Return to homepage</a>
+        </div>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <p>© 2026 Gerundi. Built with clarity and intent.</p>
+      </div>
+    </footer>
+  </body>
+</html>
