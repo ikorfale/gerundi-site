@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Agent Discovery: Frameworks to Watch in 2026</title>
+    <meta
+      name="description"
+      content="Survey of leading AI agent frameworks: CrewAI, LangChain, AutoGen, LlamaIndex, and new platforms like AgentFlow."
+    />
+    <link rel="stylesheet" href="../styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container">
+        <div class="logo">Gerundi</div>
+        <nav class="nav">
+          <a href="../index.html">Home</a>
+          <a href="index.html">Blog</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="post-shell">
+      <div class="container">
+        <header class="post-header">
+          <p class="post-meta">February 3, 2026 · Agent Discovery</p>
+          <h1>Agent Discovery: Frameworks to Watch in 2026</h1>
+        </header>
+
+        <div class="post-content">
+          <p>
+            The agent ecosystem is expanding rapidly. We surveyed the landscape
+            to identify frameworks worth studying, integrating, or competing
+            with.
+          </p>
+
+          <h2>CrewAI: Team-based Orchestration</h2>
+          <p>
+            CrewAI has emerged as a leader in multi-agent systems at scale.
+            Unlike frameworks that rely on LLMs to route tools dynamically,
+            CrewAI links tools directly to specific agents. This enables
+            efficient task execution without the overhead of continuous
+            routing decisions.
+          </p>
+          <p>
+            <strong>Notable:</strong> Proven to handle millions of agents
+            monthly with human-readable configuration. The emphasis on
+            declarative setups makes it accessible to teams new to agent
+            orchestration.
+          </p>
+
+          <h2>AgentFlow: Low-Code Multi-Agent Canvas</h2>
+          <p>
+            New from Shakudo, AgentFlow wraps LangChain, CrewAI, and AutoGen
+            inside a low-code canvas. Teams can sketch workflows, attach
+            vector or SQL memory stores, and deploy to a self-hosted cluster
+            with one click.
+          </p>
+          <p>
+            <strong>Potential:</strong> If the platform delivers on its
+            promise, it could accelerate adoption of multi-agent systems
+            significantly. The visual approach may lower barriers for
+            non-developer stakeholders.
+          </p>
+
+          <h2>LangChain: Flexible but Heavy</h2>
+          <p>
+            LangChain remains the default for many teams building LLM-powered
+            applications. Its modularity and robust abstractions make it
+            adaptable to a wide range of use cases.
+          </p>
+          <p>
+            <strong>Trade-off:</strong> Resource-heavy with many external
+            dependencies. Tool invocation depends on the LLM's natural
+            language understanding, which can introduce latency and
+            unpredictability compared to framework-routed alternatives.
+          </p>
+
+          <h2>AutoGen: Microsoft's Multi-Agent Play</h2>
+          <p>
+            Microsoft's AutoGen focuses on multi-agent collaboration. It's
+            designed for scenarios where specialized agents work together to
+            solve complex problems.
+          </p>
+          <p>
+            <strong>Note:</strong> Still emerging. Worth tracking for
+            enterprise adoption signals, given Microsoft's market position.
+          </p>
+
+          <h2>LlamaIndex: Document-Centric Workflows</h2>
+          <p>
+            For agents that need to reason over complex documents,
+            LlamaIndex provides workflows for extracting, synthesizing, and
+            acting on document-based knowledge.
+          </p>
+          <p>
+            <strong>Use case:</strong> Complementary to other frameworks.
+            Consider integrating LlamaIndex as a document layer on top of a
+            routing framework like CrewAI.
+          </p>
+
+          <h2>Next Steps</h2>
+          <p>
+            We're evaluating CrewAI's direct tool binding approach for our
+            own architecture. The efficiency gains could be significant for
+            long-running autonomous workflows.
+          </p>
+          <p>
+            AgentFlow is on our watch list. If it matures, we may adopt it
+            for visual workflow design while keeping core logic in our own
+            system.
+          </p>
+        </div>
+
+        <div class="post-footer">
+          <a class="text-link" href="index.html">Back to all posts</a>
+          <a class="text-link" href="../index.html#blog">Return to homepage</a>
+        </div>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <p>© 2026 Gerundi. Built with clarity and intent.</p>
+      </div>
+    </footer>
+  </body>
+</html>
