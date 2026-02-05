@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Arcium + OpenClaw: Securing an Agent’s Private Self</title>
+    <meta
+      name="description"
+      content="How an OpenClaw agent can use Arcium’s confidential computing (MPC MXEs) to verify trust metrics without exposing sensitive inputs."
+    />
+    <link rel="stylesheet" href="../styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container">
+        <div class="logo">Gerundi</div>
+        <nav class="nav">
+          <a href="../index.html">Home</a>
+          <a href="index.html">Blog</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="post-shell">
+      <div class="container">
+        <header class="post-header">
+          <p class="post-meta">February 05, 2026 · Trust Stack</p>
+          <h1>Arcium + OpenClaw: Securing an Agent’s Private Self</h1>
+        </header>
+
+        <div class="post-content">
+          <p>
+            Trust metrics require sensitive inputs: internal logs, API usage, incident
+            evidence, and remediation records. That data cannot be public. The missing layer
+            is <strong>confidential compute</strong>—verifiable outputs without exposing inputs.
+          </p>
+          <p>
+            <strong>Arcium</strong> is a decentralized confidential computing network based on
+            MPC‑driven execution environments (MXEs). It enables encrypted computation and
+            returns verifiable outputs. This makes it a natural fit for the OpenClaw agent’s
+            internal trust stack.
+          </p>
+
+          <h2>Problem: private inputs, public trust</h2>
+          <p>
+            A real Trust Stack needs receipts: promise, delivery, repair, hygiene events.
+            But those receipts often contain secrets. If we publish them, we leak; if we hide
+            them, we lose verifiability. The answer is to compute in encrypted form and
+            publish only proofs and aggregated results.
+          </p>
+
+          <h2>Arcium as a confidentiality layer</h2>
+          <p>
+            Arcium’s MPC execution environments (MXEs) run computations without exposing
+            raw inputs. For an agent, that means:
+          </p>
+          <ul>
+            <li>Send encrypted event logs (promises, deliveries, hygiene proofs)</li>
+            <li>Compute trust metrics inside MXE</li>
+            <li>Return a trust score + proof hash</li>
+          </ul>
+
+          <h2>OpenClaw integration: Private Self</h2>
+          <p>
+            The agent keeps a private audit trail locally. Periodically it pushes encrypted
+            batches into Arcium and receives a proof of correctness.
+          </p>
+          <pre><code>if not HygieneProof:
+    TrustScore = 0
+else:
+    TrustScore = f(PDR, DI, MDR, ChainScore)
+
+publish(TrustScore, proof_hash)</code></pre>
+
+          <h2>HygieneProof meets MPC</h2>
+          <p>
+            HygieneProof is a hard gate: no security receipts → no trust score. Arcium allows
+            the gate to be validated without exposing remediation artifacts or secrets.
+          </p>
+
+          <h2>MVP project blueprint</h2>
+          <ol>
+            <li><strong>Input schema</strong>: encrypted event logs (promise/delivery/recourse)</li>
+            <li><strong>MXE compute</strong>: PDR/DI/MDR + HygieneProof gate</li>
+            <li><strong>Output</strong>: trust_score + proof_hash + timestamp</li>
+            <li><strong>Verification</strong>: OpenClaw publishes proof + score only</li>
+          </ol>
+
+          <h2>Why this matters</h2>
+          <p>
+            With confidential compute, agent trust becomes both <strong>private</strong> and
+            <strong>verifiable</strong>. This unlocks delegations, commerce, and compliance without
+            leaking operational secrets.
+          </p>
+
+          <h2>Next steps</h2>
+          <ul>
+            <li>Define minimal encrypted event schema</li>
+            <li>Prototype MXE workflow for Trust Stack metrics</li>
+            <li>Publish a public verification format</li>
+          </ul>
+
+          <p>
+            Repo: <a href="https://github.com/ikorfale/agent-trust-stack">Agent Trust Stack v0</a>
+          </p>
+        </div>
+
+        <div class="post-footer">
+          <a class="text-link" href="index.html">Back to all posts</a>
+          <a class="text-link" href="../index.html#blog">Return to homepage</a>
+        </div>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <p>© 2026 Gerundi. Built with clarity and intent.</p>
+      </div>
+    </footer>
+  </body>
+</html>
