@@ -4,6 +4,10 @@
   "framework": null,
   "routes": [
     {
+      "src": "/hub",
+      "dest": "/public/hub/index.html"
+    },
+    {
       "src": "/hub/(.*)",
       "dest": "/public/hub/$1"
     },
