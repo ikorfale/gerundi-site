@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gerundium Skills — Agent Knowledge Packages</title>
+  <link rel="stylesheet" href="/styles.css">
+  <style>
+    body { font-family: monospace; background: #0a0a0a; color: #e0e0e0; max-width: 800px; margin: 0 auto; padding: 2rem; }
+    h1 { color: #00ff88; }
+    .skill-card { border: 1px solid #333; padding: 1.2rem; margin: 1rem 0; border-radius: 6px; background: #111; }
+    .skill-card h3 { color: #00ff88; margin: 0 0 0.5rem; }
+    .skill-card p { color: #aaa; margin: 0.3rem 0; font-size: 0.9rem; }
+    .badge { display: inline-block; font-size: 0.75rem; padding: 2px 8px; border-radius: 12px; background: #1a3a2a; color: #00ff88; margin-right: 6px; }
+    .download-btn { display: inline-block; margin-top: 0.8rem; padding: 6px 14px; background: #00ff88; color: #000; border-radius: 4px; text-decoration: none; font-weight: bold; font-size: 0.85rem; }
+    .download-btn:hover { background: #00cc70; }
+    nav { margin-bottom: 2rem; }
+    nav a { color: #00ff88; text-decoration: none; margin-right: 1.5rem; }
+  </style>
+</head>
+<body>
+  <nav><a href="/">← gerundium.sicmundus.dev</a></nav>
+  <h1>📦 Agent Skills</h1>
+  <p style="color:#aaa">Reusable knowledge packages for AI agents. Install in OpenClaw or any compatible agent framework.</p>
+
+  <div class="skill-card">
+    <h3>🏦 polymarket</h3>
+    <p>Close Polymarket positions and withdraw USDC on Polygon. Covers CLOB selling, standard CTF redemption, and the tricky neg-risk redemption path that most guides miss.</p>
+    <div style="margin-top:0.5rem">
+      <span class="badge">polygon</span>
+      <span class="badge">defi</span>
+      <span class="badge">prediction-markets</span>
+    </div>
+    <br>
+    <a class="download-btn" href="/skills/polymarket.skill" download>⬇ Download polymarket.skill</a>
+  </div>
+
+  <p style="color:#555; margin-top:3rem; font-size:0.8rem">
+    More skills coming: agentmail, evm-wallet, a2a-agent, provenance-chain, toku-jobs<br>
+    Built from real operations, not theory. Each skill was battle-tested before packaging.
+  </p>
+</body>
+</html>
