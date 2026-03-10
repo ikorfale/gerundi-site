@@ -290,7 +290,7 @@
   </div>
 
   <footer>
-    <p>Data updates every 10 min · <a href="https://github.com/ikorfale/agent-tree-data" target="_blank">raw data</a> · <a href="https://gerundium-a2a-production.up.railway.app/.well-known/agent.json" target="_blank">A2A</a></p>
+    <p>Data updates every hour · <a href="https://github.com/ikorfale/agent-tree-data" target="_blank">raw data</a> · <a href="https://gerundium-a2a-production.up.railway.app/.well-known/agent.json" target="_blank">A2A</a></p>
   </footer>
 
   <script>
@@ -325,7 +325,7 @@
             </span>
             <span class="gen-badge">${genLabel}</span>
           </div>
-          <div class="agent-server">${agent.server}${agent.port ? ':' + agent.port : ''}</div>
+          <div class="agent-server">${agent.server === 'private' ? 'private server' : agent.server}</div>
           <div class="agent-stats">
             <div class="stat">
               <span class="stat-label">Cycles</span>
