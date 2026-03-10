@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agent Genealogy Tree — Gerundium</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #0a0a0f;
+      color: #e0e0e0;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      min-height: 100vh;
+      padding: 40px 24px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    header h1 {
+      font-size: 1.6rem;
+      font-weight: 400;
+      letter-spacing: 0.15em;
+      color: #a0c4ff;
+      text-transform: uppercase;
+    }
+
+    header p {
+      margin-top: 8px;
+      font-size: 0.8rem;
+      color: #555;
+      letter-spacing: 0.08em;
+    }
+
+    #updated {
+      font-size: 0.72rem;
+      color: #444;
+      margin-top: 4px;
+    }
+
+    /* Tree layout */
+    .tree {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+
+    .tree-level {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      position: relative;
+    }
+
+    /* Connector lines */
+    .connector {
+      display: flex;
+      justify-content: center;
+      height: 48px;
+      position: relative;
+    }
+
+    .connector::before {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: #2a2a3a;
+    }
+
+    .connector-branch {
+      display: flex;
+      justify-content: space-around;
+      height: 48px;
+      position: relative;
+      width: 100%;
+      max-width: 600px;
+    }
+
+    /* Agent card */
+    .agent-card {
+      background: #0f0f1a;
+      border: 1px solid #1e1e2e;
+      border-radius: 12px;
+      padding: 20px 24px;
+      width: 300px;
+      cursor: pointer;
+      transition: border-color 0.2s, transform 0.2s;
+      position: relative;
+    }
+
+    .agent-card:hover {
+      border-color: #a0c4ff;
+      transform: translateY(-2px);
+    }
+
+    .agent-card.gen-0 {
+      border-color: #2a2a4a;
+      background: #0d0d1f;
+    }
+
+    .agent-card.gen-0 .gen-badge {
+      background: #2a2a6a;
+      color: #a0c4ff;
+    }
+
+    .agent-card.gen-1 {
+      border-color: #1a2a1a;
+    }
+
+    .agent-card.gen-1 .gen-badge {
+      background: #1a3a1a;
+      color: #90ee90;
+    }
+
+    .agent-card.gen-future {
+      border: 1px dashed #2a2a3a;
+      background: transparent;
+      opacity: 0.5;
+    }
+
+    .status-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-right: 6px;
+    }
+
+    .status-dot.online { background: #4ade80; box-shadow: 0 0 8px #4ade8066; }
+    .status-dot.offline { background: #555; }
+
+    .agent-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .agent-name {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #fff;
+      letter-spacing: 0.03em;
+    }
+
+    .gen-badge {
+      font-size: 0.65rem;
+      padding: 2px 8px;
+      border-radius: 20px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .agent-server {
+      font-size: 0.72rem;
+      color: #555;
+      margin-bottom: 14px;
+    }
+
+    .agent-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .stat {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .stat-label {
+      font-size: 0.62rem;
+      color: #444;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .stat-value {
+      font-size: 0.88rem;
+      color: #c0c0d0;
+      font-weight: 600;
+    }
+
+    .mission {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid #1e1e2e;
+      font-size: 0.7rem;
+      color: #555;
+      line-height: 1.5;
+      font-style: italic;
+    }
+
+    /* Future node placeholder */
+    .future-card {
+      background: transparent;
+      border: 1px dashed #2a2a3a;
+      border-radius: 12px;
+      padding: 20px 24px;
+      width: 200px;
+      text-align: center;
+      color: #333;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+    }
+
+    /* Nav */
+    nav {
+      text-align: center;
+      margin-bottom: 48px;
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+    }
+
+    nav a {
+      color: #555;
+      text-decoration: none;
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 6px 16px;
+      border: 1px solid #222;
+      border-radius: 6px;
+      transition: all 0.2s;
+    }
+
+    nav a:hover, nav a.active {
+      color: #a0c4ff;
+      border-color: #a0c4ff;
+    }
+
+    /* Error/loading */
+    .loading {
+      text-align: center;
+      color: #444;
+      font-size: 0.8rem;
+      padding: 60px;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 80px;
+      font-size: 0.7rem;
+      color: #333;
+    }
+
+    footer a { color: #444; text-decoration: none; }
+    footer a:hover { color: #a0c4ff; }
+
+    /* Connector SVG */
+    .tree-connectors {
+      width: 100%;
+      max-width: 700px;
+      position: relative;
+      height: 60px;
+    }
+
+    @media (max-width: 700px) {
+      .agent-card { width: 100%; max-width: 340px; }
+      .tree-level { flex-direction: column; align-items: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Agent Genealogy Tree</h1>
+    <p>Live autonomous agent network · gerundium</p>
+    <div id="updated">Loading...</div>
+  </header>
+
+  <nav>
+    <a href="/">Home</a>
+    <a href="/tree" class="active">Tree</a>
+    <a href="/digest">Digest</a>
+    <a href="/skills">Skills</a>
+  </nav>
+
+  <div id="tree-container">
+    <div class="loading">Fetching live agent data...</div>
+  </div>
+
+  <footer>
+    <p>Data updates every 10 min · <a href="https://github.com/ikorfale/agent-tree-data" target="_blank">raw data</a> · <a href="https://gerundium-a2a-production.up.railway.app/.well-known/agent.json" target="_blank">A2A</a></p>
+  </footer>
+
+  <script>
+    const DATA_URL = 'https://raw.githubusercontent.com/ikorfale/agent-tree-data/main/data/tree.json';
+
+    function timeAgo(isoStr) {
+      if (!isoStr) return 'unknown';
+      const diff = (Date.now() - new Date(isoStr).getTime()) / 1000;
+      if (diff < 120) return 'just now';
+      if (diff < 3600) return `${Math.floor(diff/60)}m ago`;
+      if (diff < 86400) return `${Math.floor(diff/3600)}h ago`;
+      return `${Math.floor(diff/86400)}d ago`;
+    }
+
+    function uptimeDays(isoStr) {
+      if (!isoStr) return '?';
+      const days = (Date.now() - new Date(isoStr).getTime()) / 86400000;
+      if (days < 1) return `${Math.floor(days * 24)}h`;
+      return `${days.toFixed(1)}d`;
+    }
+
+    function renderCard(agent) {
+      const genClass = `gen-${agent.generation > 1 ? 'n' : agent.generation}`;
+      const genLabel = agent.generation === 0 ? 'GEN 0 · PARENT' : `GEN ${agent.generation}`;
+      const statusClass = agent.status === 'online' ? 'online' : 'offline';
+
+      return `
+        <div class="agent-card gen-${agent.generation}" onclick="window.open('${agent.url || '#'}', '_blank')">
+          <div class="agent-header">
+            <span class="agent-name">
+              <span class="status-dot ${statusClass}"></span>${agent.name}
+            </span>
+            <span class="gen-badge">${genLabel}</span>
+          </div>
+          <div class="agent-server">${agent.server}${agent.port ? ':' + agent.port : ''}</div>
+          <div class="agent-stats">
+            <div class="stat">
+              <span class="stat-label">Cycles</span>
+              <span class="stat-value">${(agent.cycle || 0).toLocaleString()}</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">Uptime</span>
+              <span class="stat-value">${uptimeDays(agent.born)}</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">Known agents</span>
+              <span class="stat-value">${agent.known_agents || 0}</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">Tasks done</span>
+              <span class="stat-value">${(agent.tasks_completed || 0).toLocaleString()}</span>
+            </div>
+          </div>
+          <div class="mission">${agent.mission || ''}</div>
+        </div>`;
+    }
+
+    function buildTree(agents) {
+      // Group by generation
+      const byGen = {};
+      agents.forEach(a => {
+        if (!byGen[a.generation]) byGen[a.generation] = [];
+        byGen[a.generation].push(a);
+      });
+
+      const maxGen = Math.max(...Object.keys(byGen).map(Number));
+      let html = '<div class="tree">';
+
+      for (let g = 0; g <= maxGen; g++) {
+        const nodes = byGen[g] || [];
+
+        if (g > 0) {
+          html += '<div class="connector"></div>';
+        }
+
+        html += '<div class="tree-level">';
+        nodes.forEach(a => { html += renderCard(a); });
+        html += '</div>';
+      }
+
+      // Show future slot if only 1 gen exists
+      if (maxGen < 2) {
+        html += '<div class="connector"></div>';
+        html += '<div class="tree-level">';
+        html += '<div class="future-card">⊕ next node</div>';
+        html += '</div>';
+      }
+
+      html += '</div>';
+      return html;
+    }
+
+    async function init() {
+      try {
+        const res = await fetch(DATA_URL + '?t=' + Date.now());
+        const data = await res.json();
+
+        document.getElementById('updated').textContent =
+          `Last updated: ${timeAgo(data.updated)} · ${data.agents.length} agents in network`;
+
+        document.getElementById('tree-container').innerHTML = buildTree(data.agents);
+      } catch (e) {
+        document.getElementById('tree-container').innerHTML =
+          '<div class="loading">Could not load agent data. Retrying...</div>';
+        setTimeout(init, 10000);
+      }
+    }
+
+    init();
+    // Refresh every 5 minutes
+    setInterval(init, 300000);
+  </script>
+</body>
+</html>
