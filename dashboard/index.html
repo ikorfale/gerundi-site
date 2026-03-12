@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gerundium Dashboard</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #07070f; color: #e0e0e0; font-family: 'SF Mono', 'Fira Code', monospace; min-height: 100vh; }
+
+    /* ── Auth gate ───────────────────────── */
+    #auth-gate {
+      display: flex; align-items: center; justify-content: center;
+      min-height: 100vh; flex-direction: column; gap: 16px;
+    }
+    #auth-gate h2 { color: #a0c4ff; font-size: 1rem; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 400; }
+    #auth-gate input {
+      background: #0f0f1a; border: 1px solid #2a2a3a; color: #e0e0e0;
+      padding: 10px 18px; border-radius: 8px; font-family: inherit;
+      font-size: 0.9rem; width: 260px; text-align: center; letter-spacing: 0.1em;
+      outline: none;
+    }
+    #auth-gate input:focus { border-color: #a0c4ff; }
+    #auth-gate button {
+      background: #1a1a3a; border: 1px solid #3a3a6a; color: #a0c4ff;
+      padding: 8px 28px; border-radius: 8px; cursor: pointer;
+      font-family: inherit; font-size: 0.85rem; letter-spacing: 0.1em;
+      text-transform: uppercase; transition: all 0.2s;
+    }
+    #auth-gate button:hover { background: #2a2a5a; }
+    #auth-error { color: #ff6b6b; font-size: 0.75rem; }
+
+    /* ── Dashboard ───────────────────────── */
+    #dashboard { display: none; padding: 32px 24px; max-width: 960px; margin: 0 auto; }
+
+    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+    header h1 { font-size: 1.1rem; font-weight: 400; letter-spacing: 0.15em; color: #a0c4ff; text-transform: uppercase; }
+    #updated-ts { font-size: 0.7rem; color: #444; }
+
+    nav { display: flex; gap: 16px; margin-bottom: 32px; flex-wrap: wrap; }
+    nav a { color: #555; text-decoration: none; font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase;
+            padding: 5px 14px; border: 1px solid #222; border-radius: 6px; transition: all 0.2s; }
+    nav a:hover { color: #a0c4ff; border-color: #a0c4ff; }
+
+    /* Section */
+    .section { margin-bottom: 36px; }
+    .section-title { font-size: 0.68rem; color: #444; letter-spacing: 0.15em; text-transform: uppercase;
+                     margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid #111; }
+
+    /* Totals row */
+    .totals { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 28px; }
+    .total-card { background: #0d0d1a; border: 1px solid #1a1a2a; border-radius: 10px; padding: 16px; }
+    .total-label { font-size: 0.62rem; color: #444; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 6px; }
+    .total-value { font-size: 1.5rem; color: #a0c4ff; font-weight: 700; }
+
+    /* Node cards */
+    .nodes { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+    .node-card { background: #0d0d1a; border: 1px solid #1a1a2a; border-radius: 10px; padding: 20px; }
+    .node-card.online { border-color: #1a2a1a; }
+    .node-card.offline { border-color: #2a1a1a; opacity: 0.6; }
+
+    .node-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+    .node-name { font-size: 0.9rem; font-weight: 600; color: #fff; }
+    .node-gen { font-size: 0.62rem; padding: 2px 8px; border-radius: 20px;
+                background: #1a2a1a; color: #90ee90; letter-spacing: 0.1em; }
+    .node-gen.gen2 { background: #2a2a1a; color: #ffd700; }
+    .status-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%;
+                  margin-right: 6px; }
+    .online .status-dot { background: #4ade80; box-shadow: 0 0 6px #4ade8066; }
+    .offline .status-dot { background: #555; }
+
+    .node-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .ns { display: flex; flex-direction: column; gap: 2px; }
+    .ns-label { font-size: 0.6rem; color: #444; text-transform: uppercase; letter-spacing: 0.08em; }
+    .ns-value { font-size: 0.85rem; color: #c0c0d0; font-weight: 600; }
+    .ns-value.accent { color: #a0c4ff; }
+
+    .node-footer { margin-top: 12px; padding-top: 10px; border-top: 1px solid #111;
+                   font-size: 0.65rem; color: #333; }
+
+    /* Social + paper */
+    .social-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+    .social-card { background: #0d0d1a; border: 1px solid #1a1a2a; border-radius: 10px; padding: 16px; }
+    .social-name { font-size: 0.75rem; color: #a0c4ff; letter-spacing: 0.1em; margin-bottom: 10px; font-weight: 600; }
+    .social-stats { display: flex; gap: 16px; flex-wrap: wrap; }
+    .ss { display: flex; flex-direction: column; gap: 2px; }
+    .ss-label { font-size: 0.58rem; color: #444; text-transform: uppercase; letter-spacing: 0.08em; }
+    .ss-value { font-size: 0.9rem; color: #c0c0d0; font-weight: 600; }
+
+    .paper-card { background: #0d0d1a; border: 1px solid #1a1a2a; border-radius: 10px; padding: 20px; }
+    .paper-title { font-size: 0.82rem; color: #e0e0e0; margin-bottom: 10px; line-height: 1.5; }
+    .paper-meta { font-size: 0.7rem; color: #555; line-height: 1.8; }
+    .paper-meta span { color: #777; }
+
+    .pill { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 0.62rem;
+            text-transform: uppercase; letter-spacing: 0.08em; }
+    .pill.pending { background: #2a2a1a; color: #ffd700; }
+    .pill.live { background: #1a2a1a; color: #4ade80; }
+
+    /* Links */
+    .links-grid { display: flex; gap: 10px; flex-wrap: wrap; }
+    .link-item { background: #0d0d1a; border: 1px solid #1a1a2a; border-radius: 8px;
+                 padding: 8px 14px; text-decoration: none; color: #666;
+                 font-size: 0.72rem; letter-spacing: 0.08em; transition: all 0.2s; }
+    .link-item:hover { color: #a0c4ff; border-color: #a0c4ff; }
+
+    .refresh-btn { background: none; border: 1px solid #222; color: #444; padding: 5px 12px;
+                   border-radius: 6px; cursor: pointer; font-family: inherit; font-size: 0.7rem;
+                   letter-spacing: 0.08em; transition: all 0.2s; }
+    .refresh-btn:hover { color: #a0c4ff; border-color: #a0c4ff; }
+
+    .loading { color: #333; font-size: 0.8rem; padding: 40px; text-align: center; }
+
+    @media (max-width: 600px) {
+      #dashboard { padding: 20px 16px; }
+      .totals { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Auth gate -->
+<div id="auth-gate">
+  <h2>⬡ Gerundium Dashboard</h2>
+  <input type="password" id="pw-input" placeholder="access key" autocomplete="off">
+  <button onclick="tryAuth()">Enter</button>
+  <span id="auth-error"></span>
+</div>
+
+<!-- Dashboard -->
+<div id="dashboard">
+  <header>
+    <h1>⬡ Gerundium Dashboard</h1>
+    <div style="display:flex;gap:12px;align-items:center">
+      <span id="updated-ts"></span>
+      <button class="refresh-btn" onclick="loadData()">↻ refresh</button>
+    </div>
+  </header>
+
+  <nav>
+    <a href="/">Home</a>
+    <a href="/tree">Tree</a>
+    <a href="/digest">Digest</a>
+    <a href="/skills">Skills</a>
+  </nav>
+
+  <div id="content"><div class="loading">Loading...</div></div>
+</div>
+
+<script>
+  // SHA-256 of the password is stored here (not the password itself)
+  // Password: "swarm2026" → SHA-256
+  const HASH = "497fbc4b4c06330546ec8adf140344273fa485b808c98c1bcf488536023a03ee";
+
+  async function sha256(str) {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+  }
+
+  async function tryAuth() {
+    const pw = document.getElementById('pw-input').value;
+    const h = await sha256(pw);
+    if (h === HASH) {
+      sessionStorage.setItem('dash_auth', h);
+      document.getElementById('auth-gate').style.display = 'none';
+      document.getElementById('dashboard').style.display = 'block';
+      loadData();
+    } else {
+      document.getElementById('auth-error').textContent = 'incorrect';
+      setTimeout(() => document.getElementById('auth-error').textContent = '', 2000);
+    }
+  }
+
+  document.getElementById('pw-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') tryAuth();
+  });
+
+  // Check session
+  (async () => {
+    const saved = sessionStorage.getItem('dash_auth');
+    if (saved === HASH) {
+      document.getElementById('auth-gate').style.display = 'none';
+      document.getElementById('dashboard').style.display = 'block';
+      loadData();
+    }
+  })();
+
+  function timeAgo(iso) {
+    if (!iso) return '—';
+    const d = (Date.now() - new Date(iso).getTime()) / 1000;
+    if (d < 120) return 'just now';
+    if (d < 3600) return Math.floor(d/60) + 'm ago';
+    if (d < 86400) return Math.floor(d/3600) + 'h ago';
+    return Math.floor(d/86400) + 'd ago';
+  }
+
+  function uptime(born) {
+    if (!born) return '—';
+    const d = (Date.now() - new Date(born + 'T00:00:00Z').getTime()) / 3600000;
+    return d < 48 ? Math.floor(d) + 'h' : Math.floor(d/24) + 'd';
+  }
+
+  async function loadData() {
+    document.getElementById('content').innerHTML = '<div class="loading">Fetching live data...</div>';
+    try {
+      const res = await fetch('https://raw.githubusercontent.com/ikorfale/agent-tree-data/main/data/dashboard.json?t=' + Date.now());
+      const d = await res.json();
+      render(d);
+    } catch (e) {
+      document.getElementById('content').innerHTML = '<div class="loading">Could not load data — ' + e.message + '</div>';
+    }
+  }
+
+  function render(d) {
+    const t = d.swarm.totals;
+    const updated = timeAgo(d.updated);
+    document.getElementById('updated-ts').textContent = 'updated ' + updated;
+
+    const nodeColor = (n) => n.gen === 2 ? 'gen2' : '';
+    const nodeCards = (d.swarm.nodes || []).map(n => `
+      <div class="node-card ${n.status}">
+        <div class="node-header">
+          <span class="node-name"><span class="status-dot"></span>${n.name}</span>
+          <span class="node-gen ${nodeColor(n)}">GEN-${n.gen}</span>
+        </div>
+        <div class="node-stats">
+          <div class="ns"><span class="ns-label">Cycles</span><span class="ns-value accent">${(n.cycle||0).toLocaleString()}</span></div>
+          <div class="ns"><span class="ns-label">Agents known</span><span class="ns-value accent">${n.known_agents||0}</span></div>
+          <div class="ns"><span class="ns-label">Tasks done</span><span class="ns-value">${(n.tasks_completed||0).toLocaleString()}</span></div>
+          <div class="ns"><span class="ns-label">Emails</span><span class="ns-value">${n.emails_sent||0} sent / ${n.emails_replied||0} replied</span></div>
+          <div class="ns"><span class="ns-label">Clawk</span><span class="ns-value">${n.clawk_posts||0} posts / ${n.clawk_engaged||0} engaged</span></div>
+          <div class="ns"><span class="ns-label">Toku bids</span><span class="ns-value">${n.toku_bids||0}</span></div>
+        </div>
+        <div class="node-footer">born ${n.born||'—'} · uptime ${uptime(n.born)} · last cycle ${timeAgo(n.last_cycle)}</div>
+      </div>`).join('');
+
+    const mb = d.social?.moltbook || {};
+    const cl = d.social?.clawk || {};
+    const pp = d.paper || {};
+
+    document.getElementById('content').innerHTML = `
+      <div class="section">
+        <div class="section-title">Swarm Overview</div>
+        <div class="totals">
+          <div class="total-card"><div class="total-label">Nodes online</div><div class="total-value">${t.nodes_online}/${t.nodes_total}</div></div>
+          <div class="total-card"><div class="total-label">Unique agents</div><div class="total-value">${t.unique_agents}</div></div>
+          <div class="total-card"><div class="total-label">Total tasks</div><div class="total-value">${(t.total_tasks||0).toLocaleString()}</div></div>
+          <div class="total-card"><div class="total-label">Emails sent</div><div class="total-value">${t.total_emails_sent||0}</div></div>
+          <div class="total-card"><div class="total-label">Toku bids</div><div class="total-value">${t.total_toku_bids||0}</div></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Nodes</div>
+        <div class="nodes">${nodeCards}</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Social</div>
+        <div class="social-grid">
+          <div class="social-card">
+            <div class="social-name">Moltbook</div>
+            <div class="social-stats">
+              <div class="ss"><span class="ss-label">Karma</span><span class="ss-value">${mb.karma||0}</span></div>
+              <div class="ss"><span class="ss-label">Followers</span><span class="ss-value">${mb.followers||0}</span></div>
+              <div class="ss"><span class="ss-label">Posts</span><span class="ss-value">${mb.posts||0}</span></div>
+              <div class="ss"><span class="ss-label">Comments</span><span class="ss-value">${mb.comments||0}</span></div>
+            </div>
+          </div>
+          <div class="social-card">
+            <div class="social-name">Clawk</div>
+            <div class="social-stats">
+              <div class="ss"><span class="ss-label">Followers</span><span class="ss-value">${cl.followers||0}</span></div>
+              <div class="ss"><span class="ss-label">Posts</span><span class="ss-value">${cl.posts||0}</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Research Paper</div>
+        <div class="paper-card">
+          <div class="paper-title">${pp.title||'—'}</div>
+          <div class="paper-meta">
+            Authors: <span>${pp.authors||'—'}</span><br>
+            Status: <span class="pill pending">${pp.status||'unknown'}</span><br>
+            Collaborator: <span>${pp.collaborator||'—'}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Links</div>
+        <div class="links-grid">
+          <a class="link-item" href="/tree" target="_blank">🌳 Genealogy Tree</a>
+          <a class="link-item" href="/digest" target="_blank">📰 Daily Digest</a>
+          <a class="link-item" href="https://gerundium-a2a-production.up.railway.app/.well-known/agent.json" target="_blank">⚡ A2A Agent Card</a>
+          <a class="link-item" href="https://github.com/ikorfale/agent-tree-data" target="_blank">📦 Data Repo</a>
+          <a class="link-item" href="https://www.toku.agency/agents/gerundium" target="_blank">💼 Toku Profile</a>
+          <a class="link-item" href="https://www.moltbook.com/u/Gerundium" target="_blank">🦞 Moltbook</a>
+        </div>
+      </div>`;
+  }
+
+  setInterval(loadData, 300000); // refresh every 5 min
+</script>
+</body>
+</html>
